@@ -67,12 +67,12 @@
 				return 1 - Math.abs(1 - estimate / Math.PI);
 			}
 
-			function updateUi(numInside, total) {
-				let estimate = estimatePi(numInside, total);
+			function updateUi(numInside, total, estimate, precision) {
+				
 				document.getElementById('in').innerText = numInside;
 				document.getElementById('out').innerText = total - numInside;
 				document.getElementById('estimate').innerText = estimate;
-				document.getElementById('precision').innerText = calcPrecision(estimate);
+				document.getElementById('precision').innerText = precision;
 				document.getElementById('total').innerText = total;
 			}
 
@@ -80,11 +80,13 @@
 				drawCircle(0.5, 0.5, toPx(0.5));
 			}
 
-			function startUpdate(updatesASecond, dotsToAdd) {
+			function startUpdate(updatesASecond, dotsToAdd, stopAtPrecision) {
 				initCircle();
 
 				let dotsIn = 0;
 				let dotsTotal = 0;
+				let estimate = 0;
+				let precision = 0;
 
 				let timerId = window.setInterval(function () {
 
@@ -94,17 +96,21 @@
 					
 					dotsTotal++;
 
-					updateUi(dotsIn, dotsTotal);
+					estimate = estimatePi(dotsIn, dotsTotal);
+					precision = calcPrecision(estimate);
+					updateUi(dotsIn, dotsTotal, estimate, precision);
 
 					// see if we need to stop
-					if (dotsTotal >= dotsToAdd)
+					if (dotsTotal >= dotsToAdd || stopAtPrecision && precision.toString().startsWith(stopAtPrecision.toString()))
 						window.clearInterval(timerId);
+
+
 
 				}, 1000 / updatesASecond);
 			}
 
 
-			startUpdate(300, 10000);
+			startUpdate(10, 1000, 0.9);
 
 		</script>
 	</body>
