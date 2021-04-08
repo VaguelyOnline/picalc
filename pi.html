@@ -1,0 +1,112 @@
+<html>
+    <head>
+    	<style>
+    		#canvas {
+    			/*width: 500px;
+    			height: 500px;*/
+    			border: 1px solid grey;
+    		}
+    	</style>
+    </head>
+	<body>
+
+		<h3>
+			Estimate of pi: <span id="estimate"></span>
+		</h3>
+		<h3>
+			Precision: <span id="precision"></span>
+		</h3>
+		<h4>
+			Dots in: <span id=in></span>,  Dots out: <span id="out"></span>, total: <span id="total"></span>
+		</h4>
+
+		<canvas id="canvas" width="500" height="500"></canvas>
+
+
+
+		<script>
+			const c = document.getElementById('canvas');
+			const ctx = c.getContext('2d');
+			const { width, height } = { width: c.width, height: c.height };
+			function toPx(percent) {
+				return width * percent;
+			}
+
+			function drawCircle(percentX, percentY, radius) {
+				ctx.beginPath();
+				const x = toPx(percentX);
+				const y = toPx(percentY);
+				ctx.arc(x, y, radius, 0, 2*Math.PI);
+				ctx.stroke();
+			}
+
+			function addDot(percentX, percentY) {
+				drawCircle(percentX, percentY, 1);
+			}
+
+			function addRandomDot() {
+				let x = Math.random();
+				let y = Math.random();
+				addDot(x, y);
+
+				return {x, y};
+			}
+
+			function isInCircle(dot) {
+				return dot.x ** 2 + dot.y ** 2 < 1;
+			}
+
+
+			function estimatePi(numInside, total) {
+				if (!total)
+					return 0;
+				return 4 * numInside / total;
+			}
+
+			function calcPrecision(estimate) {
+				return 1 - Math.abs(1 - estimate / Math.PI);
+			}
+
+			function updateUi(numInside, total) {
+				let estimate = estimatePi(numInside, total);
+				document.getElementById('in').innerText = numInside;
+				document.getElementById('out').innerText = total - numInside;
+				document.getElementById('estimate').innerText = estimate;
+				document.getElementById('precision').innerText = calcPrecision(estimate);
+				document.getElementById('total').innerText = total;
+			}
+
+			function initCircle() {
+				drawCircle(0.5, 0.5, toPx(0.5));
+			}
+
+			function startUpdate(updatesASecond, dotsToAdd) {
+				initCircle();
+
+				let dotsIn = 0;
+				let dotsTotal = 0;
+				let numPoints = 100;
+
+				let timerId = window.setInterval(function () {
+
+					let dot = addRandomDot();
+					if (isInCircle(dot))
+						dotsIn++;
+					
+					dotsTotal++;
+
+					updateUi(dotsIn, dotsTotal);
+
+					// see if we need to stop
+					if (dotsTotal >= dotsToAdd)
+						window.clearInterval(timerId);
+
+				}, 1000 / updatesASecond);
+			}
+
+
+			startUpdate(100, 10000);
+
+		</script>
+	</body>
+</html>
