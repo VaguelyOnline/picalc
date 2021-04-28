@@ -2,7 +2,7 @@
 Simple HTML example of how to calculate PI from random estimates.
 
 ## How does it work?
-The code uses the HTML Canvas API to draw a circle, bounded by a square. It then proceeds to add a random dot to the picture, until the desired total of dots is reached?
+The code uses the HTML Canvas API to draw a circle, bounded by a square. It then proceeds to add a random dots to the picture, until the desired total of dots is reached.
 
 ## How does this calculate PI?
 One of the ways to calculate PI, is to look at the ratio of the area of a circle, to the area of a square it's in. Consider a circle of radius 1:
